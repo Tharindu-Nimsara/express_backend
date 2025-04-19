@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 export function createUser(req, res) {
-  //only a admin can create another admin
+  //only an admin can create another admin
   if ((req.body.role = "admin")) {
     if (req.user != null) {
       if (req.user.role != "admin") {
@@ -89,10 +89,10 @@ export function loginUser(req, res) {
 
 export function isAdmin(req, res) {
   if (req.user == null) {
-    return false
+    return false;
   }
-  if(req.user.role != "admin") {
-    return false
+  if (req.user.role != "admin") {
+    return false;
   }
-  return true
+  return true;
 }
