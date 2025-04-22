@@ -19,7 +19,7 @@ export async function createReview(req, res) {
   // Check for duplicate review by same user
   const existingReview = await Review.findOne({
     productId: reviewInfo.productId,
-    userId: req.user.userId,
+    email: req.user.email,
   });
   if (existingReview) {
     return res
@@ -39,7 +39,7 @@ export async function createReview(req, res) {
     const review = new Review({
       reviewId,
       productId: reviewInfo.productId,
-      userId: req.user.userId,
+      email: req.user.email,
       userName: req.user.firstName + " " + req.user.lastName,
       rating: reviewInfo.rating,
       comment: reviewInfo.comment || "",
@@ -55,7 +55,7 @@ export async function createReview(req, res) {
 
 // Get all reviews for a product
 export async function getProductReviews(req, res) {
-  //const productId = req.params.productId  
+  //const productId = req.params.productId
   const { productId } = req.params;
 
   try {
@@ -80,8 +80,7 @@ export async function deleteReview(req, res) {
       return res.status(404).json({ message: "Review not found" });
     }
 
-
-    if (review.userId !== req.user.userId && !isAdmin) {
+    if (review.email !== req.user.email && !isAdmin) {
       return res
         .status(403)
         .json({ message: "Unauthorized to delete this review" });

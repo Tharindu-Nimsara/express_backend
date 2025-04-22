@@ -12,10 +12,10 @@ const reviewSchema = mongoose.Schema({
     required: true,
     trim: true,
   },
-  userId: {
+  email:{
     type: String,
     required: true,
-    trim: true,
+    
   },
   userName: {
     type: String,
