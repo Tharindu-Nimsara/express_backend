@@ -1,5 +1,6 @@
 import Order from "../models/order.js";
 import Product from "../models/products.js";
+import { isAdmin } from "./userControllers.js";
 
 export async function createOrder(req, res) {
   //get user info
@@ -47,7 +48,7 @@ export async function createOrder(req, res) {
   try {
     let total = 0;
     let labelledTotal = 0;
-    const products = []; //to make a product arra with info
+    const products = []; //to make a product array with info
 
     //validating products
     for (let i = 0; i < orderInfo.products.length; i++) {
@@ -84,7 +85,7 @@ export async function createOrder(req, res) {
           labelledPrice: item.labelledPrice,
           price: item.price,
         },
-        quantity: orderInfo.products[i].qty
+        quantity: orderInfo.products[i].qty,
       };
 
       total += item.price * orderInfo.products[i].qty;
@@ -95,7 +96,6 @@ export async function createOrder(req, res) {
     //create order
     const order = new Order({
       orderId: orderId,
-      userId:req.userId,
       email: req.user.email,
       name: orderInfo.name,
       address: orderInfo.address,
@@ -118,7 +118,7 @@ export async function createOrder(req, res) {
   }
 }
 
-export async function deleteOrder(req,res){
+export async function deleteOrder(req, res) {
   //get user info
   if (req.user == null) {
     res.status(403).json({
@@ -127,19 +127,25 @@ export async function deleteOrder(req,res){
     return;
   }
 
-  
-  try{
-    await Order.deleteOne({orderId: req.params.orderId  });
+  const orderInfo_2 = req.params;
+
+  // A order can delete by only the order placed user or by an admin
+  if (!(orderInfo_2.email == req.user.email) && !isAdmin) {
+    res.status(403).json({
+      message: "You have no authorization to delete this order",
+    });
+    return;
+  }
+
+  try {
+    await Order.deleteOne({ orderId: req.params.orderId });
     res.json({
       message: "Order deleted successfully",
     });
-  }catch(err){
+  } catch (err) {
     res.status(500).json({
       message: "Failed to delete order",
       error: err,
-    })
+    });
   }
-
-
-
 }
