@@ -22,7 +22,7 @@ export async function createOrder(req, res) {
 
   //getting last orderId
   //date: -1  means getting the latest order (a order list). limit to one order
-  //if we put date:1  it gives first order
+  //if we put date:1  it gives first order not the latest one
   const lastOrder = await Order.find().sort({ date: -1 }).limit(1);
 
   //now lastOrder is a array with one element
@@ -95,6 +95,7 @@ export async function createOrder(req, res) {
     //create order
     const order = new Order({
       orderId: orderId,
+      userId:req.userId,
       email: req.user.email,
       name: orderInfo.name,
       address: orderInfo.address,
@@ -115,4 +116,30 @@ export async function createOrder(req, res) {
       error: err,
     });
   }
+}
+
+export async function deleteOrder(req,res){
+  //get user info
+  if (req.user == null) {
+    res.status(403).json({
+      message: "Please login and try again",
+    });
+    return;
+  }
+
+  
+  try{
+    await Order.deleteOne({orderId: req.params.orderId  });
+    res.json({
+      message: "Order deleted successfully",
+    });
+  }catch(err){
+    res.status(500).json({
+      message: "Failed to delete order",
+      error: err,
+    })
+  }
+
+
+
 }
