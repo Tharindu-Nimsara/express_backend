@@ -11,33 +11,48 @@ export async function createReview(req, res) {
   const reviewInfo = req.body;
 
   // Validate product
-  const product = await Product.findOne({ productId: reviewInfo.productId });
-  if (!product) {
-    return res.status(404).json({ message: "Product not found" });
+  try {
+    const product = await Product.findOne({ productId: reviewInfo.productId });
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: "Error fetching product", error: err });
   }
 
   // Check for duplicate review by same user
-  const existingReview = await Review.findOne({
-    productId: reviewInfo.productId,
-    email: req.user.email,
-  });
-  if (existingReview) {
-    return res
-      .status(400)
-      .json({ message: "You have already reviewed this product" });
+  try{
+      const existingReview = await Review.findOne({
+      productId: reviewInfo.productId,
+      email: req.user.email,
+    });
+    if (existingReview) {
+        return res
+        .status(400)
+        .json({ message: "You have already reviewed this product" });
+    }
+
+  }catch (err) {
+    return res.status(500).json({ message: "Error checking existing review", error: err });
   }
+  
 
   // Optional custom reviewId like REV00001
-  const lastReview = await Review.find().sort({ date: -1 }).limit(1);
-  let reviewId = "REV00001";
-  if (lastReview.length > 0) {
-    const lastNum = parseInt(lastReview[0].reviewId.replace("REV", ""));
-    reviewId = "REV" + String(lastNum + 1).padStart(5, "0");
+  try{
+    const lastReview = await Review.find().sort({ date: -1 }).limit(1);
+    let reviewId_this = "REV00001";
+    if (lastReview.length > 0) {
+      const lastNum = parseInt(lastReview[0].reviewId.replace("REV", ""));
+      reviewId_this = "REV" + String(lastNum + 1).padStart(5, "0");
+    }
+  } catch (err) {
+    return res.status(500).json({ message: "Error generating review ID", error: err }); 
   }
+
 
   try {
     const review = new Review({
-      reviewId,
+      reviewId: reviewId_this,
       productId: reviewInfo.productId,
       email: req.user.email,
       userName: req.user.firstName + " " + req.user.lastName,
