@@ -9,9 +9,9 @@ import {
 
 const productRouter = express.Router();
 
-productRouter.get("/", getProducts); //localhost:5000/api/products
+productRouter.get("/", getProducts); //localhost:5000/api/product
 productRouter.post("/", saveProducts);
-productRouter.delete("/:productId", deleteProduct); //localhost:5000/api/products/productID
+productRouter.delete("/:productId", deleteProduct); //localhost:5000/api/product/productID
 productRouter.put("/:productId", updateProduct);
 productRouter.get("/:productId", getProductById);
 
