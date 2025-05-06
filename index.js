@@ -51,13 +51,10 @@ mongoose
 
 //mongodb+srv://admin:123@cluster0.5zxpq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
 
-app.use("/products", productRouter);
-
-app.use("/users", userRouter);
-
-app.use("/orders", orderRouter)
-
-app.use("/reviews", reviewRouter)
+app.use("/api/product", productRouter);
+app.use("/api/user", userRouter);
+app.use("/api/order", orderRouter)
+app.use("/api/review", reviewRouter)
 
 app.listen(5000, () => {
   console.log("Server is running on port 5000");
