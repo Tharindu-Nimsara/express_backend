@@ -7,13 +7,11 @@ import {
 
 const reviewRouter = express.Router();
 
-// Create a review (POST /revaiews)
+// localhost:5000/api/review
 reviewRouter.post("/", createReview);
 
-// Get reviews for a product (GET /reviews/:productId)
 reviewRouter.get("/:productId", getProductReviews);
 
-// Delete a review (DELETE /reviews/:reviewId)
 reviewRouter.delete("/:reviewId", deleteReview);
 
 export default reviewRouter;
