@@ -6,8 +6,12 @@ import userRouter from "./routes/userRouter.js";
 import jwt from "jsonwebtoken";
 import orderRouter from "./routes/orderRouter.js";
 import reviewRouter from "./routes/reviewRouter.js";
+import cors from "cors";
+
 
 const app = express();
+
+app.use(cors()); // Enable CORS for all routes
 
 //bodyParser Middlewhere 1
 app.use(bodyParser.json()); //bodyParser get the http request at first, arrage it and send to relavant place
