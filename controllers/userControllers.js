@@ -1,6 +1,8 @@
 import User from "../models/user.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config(); // Load environment variables from .env file
 
 export function createUser(req, res) {
   //only an admin can create another admin
@@ -72,7 +74,7 @@ export function loginUser(req, res) {
             role: user.role,
             img: user.img,
           },
-          "cbc-batch-five@2025" //encryption key
+          process.env.JWT_KEY  //encryption key
         );
         res.json({
           message: "Login Successful",

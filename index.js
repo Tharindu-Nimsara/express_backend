@@ -25,7 +25,7 @@ app.use((req, res, next) => {
   if (tokenString != null) {
     const token = tokenString.replace("Bearer ", "");
 
-    jwt.verify(token, "cbc-batch-five@2025", (err, decoded) => {
+    jwt.verify(token, process.env.JWT_KEY , (err, decoded) => {
       if (decoded != null) {
         req.user = decoded;
         next();
