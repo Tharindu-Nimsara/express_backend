@@ -7,6 +7,9 @@ import jwt from "jsonwebtoken";
 import orderRouter from "./routes/orderRouter.js";
 import reviewRouter from "./routes/reviewRouter.js";
 import cors from "cors";
+import dotenv from "dotenv";
+
+dotenv.config(); // Load environment variables from .env file
 
 
 const app = express();
@@ -41,7 +44,7 @@ app.use((req, res, next) => {
 //connecting the code with the database
 mongoose
   .connect(
-    "mongodb+srv://admin:123@cluster0.5zxpq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    process.env.MONGODB_URL
   )
   .then(() => {
     console.log("CONNECTED TO THE DATABASE");
