@@ -74,11 +74,13 @@ export function loginUser(req, res) {
             role: user.role,
             img: user.img,
           },
-          process.env.JWT_KEY  //encryption key
+          process.env.JWT_KEY  //encryption key for the token Stored in .env file
         );
+        //sending the token to the client
         res.json({
           message: "Login Successful",
           token: token,
+          role: user.role,
         });
       } else {
         res.json({
