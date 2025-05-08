@@ -6,9 +6,9 @@ dotenv.config(); // Load environment variables from .env file
 
 export function createUser(req, res) {
   //only an admin can create another admin
-  if ((req.body.role = "admin")) {
+  if ((req.body.role === "admin")) {
     if (req.user != null) {
-      if (req.user.role != "admin") {
+      if (req.user.role !== "admin") {
         res.status(403).json({
           message: "You are not authorized to create an admin accounts",
         });
