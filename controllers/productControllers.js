@@ -33,43 +33,102 @@ export async function getProducts(req, res) {
 }
 
 export function saveProducts(req, res) {
-  // //checking valid user (see JWT)
-  // if(req.user == null){
-  //     res.status(403).json({
-  //         message:"Unauthorized"
-  //     })
-  //     return
-  // }
-
-  // if(req.user.role != "admin"){
-  //     res.status(403).json({
-  //         message: "Unauthorized You need to be an Admin"
-  //     })
-  //     return
-  // }
-
   if (!isAdmin(req)) {
     res.status(403).json({
       message: "Unauthorized You need to be an Admin",
     });
-    return; //exit from saveProducts function
+    return;
+  }
+
+  console.log("📥 Received product data:", req.body); // ✅ Debug log
+
+  // ✅ Validation
+  const { productId, name, description, labelledPrice, price, stock } =
+    req.body;
+
+  if (!productId || !name || !description) {
+    res.status(400).json({
+      message: "Product ID, name, and description are required",
+    });
+    return;
+  }
+
+  if (isNaN(labelledPrice) || isNaN(price) || isNaN(stock)) {
+    res.status(400).json({
+      message: "Labelled price, price, and stock must be valid numbers",
+    });
+    return;
   }
 
   const product1 = new Product(req.body);
 
   product1
     .save()
-    .then(() => {
-      res.json({
+    .then((savedProduct) => {
+      console.log("✅ Product saved successfully:", savedProduct); // ✅ Debug log
+      res.status(201).json({
         message: "Product saved successfully",
+        product: savedProduct,
       });
     })
-    .catch(() => {
-      res.json({
-        message: "Failed to save product!",
-      });
+    .catch((error) => {
+      console.error("❌ Database save error:", error); // ✅ Debug log
+
+      // Handle specific MongoDB errors
+      if (error.code === 11000) {
+        res.status(400).json({
+          message: "Product ID already exists",
+        });
+      } else if (error.name === "ValidationError") {
+        res.status(400).json({
+          message: "Validation error: " + error.message,
+        });
+      } else {
+        res.status(500).json({
+          message: "Failed to save product: " + error.message,
+        });
+      }
     });
 }
+
+// export function saveProducts(req, res) {
+//   // //checking valid user (see JWT)
+//   // if(req.user == null){
+//   //     res.status(403).json({
+//   //         message:"Unauthorized"
+//   //     })
+//   //     return
+//   // }
+
+//   // if(req.user.role != "admin"){
+//   //     res.status(403).json({
+//   //         message: "Unauthorized You need to be an Admin"
+//   //     })
+//   //     return
+//   // }
+
+//   if (!isAdmin(req)) {
+//     res.status(403).json({
+//       message: "Unauthorized You need to be an Admin",
+//     });
+//     return; //exit from saveProducts function
+//   }
+
+//   const product1 = new Product(req.body);
+
+//   product1
+//     .save()
+//     .then(() => {
+//       res.json({
+//         message: "Product saved successfully",
+//       });
+//     })
+//     .catch(() => {
+//       res.json({
+//         message: "Failed to save product!",
+//       });
+//     });
+// }
 
 export async function deleteProduct(req, res) {
   //only an admin can delete a product
@@ -116,7 +175,6 @@ export async function updateProduct(req, res) {
     });
   }
 }
-
 
 //get only one product
 export async function getProductById(req, res) {

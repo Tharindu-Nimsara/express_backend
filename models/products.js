@@ -10,9 +10,9 @@ const productSchema = mongoose.Schema({
         type : String,
         required : true
     },
-    altName : {
+    altName : [{
         type : String
-    },
+    }],
     description : {
         type : String,
         required : true
